@@ -66,5 +66,6 @@ endif()
 add_subdirectory(utf8_checker_ut)
 add_subdirectory(http_proxy_io_ut)
 
-#Add template as reference for new tests
+#Add templates as reference for new tests
 add_subdirectory(template_ut)
+add_subdirectory(template_empty_ut)
