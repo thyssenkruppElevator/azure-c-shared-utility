@@ -140,6 +140,13 @@ static X509* my_PEM_read_bio_X509_AUX(BIO* bp, X509** x, pem_password_cb* cb, vo
     return (X509*)my_gballoc_malloc(sizeof(X509));
 }
 
+static long my_SSL_CTX_ctrl(SSL_CTX* ctx, int cmd, long larg, void* parg)
+{
+    (void)ctx;
+    (void)cmd;
+    (void)larg;
+    my_gballoc_free(parg);
+}
 
 static X509 * my_PEM_read_bio_X509(BIO * bp, X509 ** x, pem_password_cb * cb, void * u)
 {
@@ -221,7 +228,7 @@ BEGIN_TEST_SUITE(x509_openssl_unittests)
         REGISTER_GLOBAL_MOCK_RETURNS(BIO_new_mem_buf, TEST_BIO_CERT, NULL);
         REGISTER_GLOBAL_MOCK_HOOK(PEM_read_bio_X509_AUX, my_PEM_read_bio_X509_AUX);
         REGISTER_GLOBAL_MOCK_RETURNS(SSL_CTX_use_PrivateKey, 1, 0);
-        REGISTER_GLOBAL_MOCK_RETURNS(SSL_CTX_ctrl, 1, 0);
+        REGISTER_GLOBAL_MOCK_HOOK(SSL_CTX_ctrl, my_SSL_CTX_ctrl);
     }
 
     TEST_SUITE_CLEANUP(TestClassCleanup)
