@@ -146,6 +146,7 @@ static long my_SSL_CTX_ctrl(SSL_CTX* ctx, int cmd, long larg, void* parg)
     (void)cmd;
     (void)larg;
     my_gballoc_free(parg);
+    return 1;
 }
 
 static X509 * my_PEM_read_bio_X509(BIO * bp, X509 ** x, pem_password_cb * cb, void * u)
