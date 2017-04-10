@@ -121,6 +121,8 @@ extern int xio_close(XIO_HANDLE xio, ON_IO_CLOSE_COMPLETE on_io_close_complete, 
 
 ### xio_send
 
+In order to avoid gratuitous buffer copies, it is the responsibility of the caller to ensure that `buffer` remains available and unmodified until `on_send_complete` has been called. (N.B. It was considered to require `buffer` to be a smart pointer, but this was rejected in order to allow the caller to use custom memory management or static buffers if desired.)
+
 ```c
 extern int xio_send(XIO_HANDLE xio, const void* buffer, size_t size, ON_SEND_COMPLETE on_send_complete, void* callback_context);
 ```
@@ -136,6 +138,8 @@ extern int xio_send(XIO_HANDLE xio, const void* buffer, size_t size, ON_SEND_COM
 **SRS_XIO_01_015: [** If the underlying concrete_xio_send fails, xio_send shall return a non-zero value. **]**
 
 **SRS_XIO_01_011: [** No error check shall be performed on buffer and size. **]**
+
+**SRS_XIO_01_032: [** xio_send shall rely on the caller for managing the existence of the buffer. (In other words, do not copy the buffer for purposes of pass-thru.) **]**
 
 ### xio_dowork
 
