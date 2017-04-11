@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <time.h>
 #include "azure_c_shared_utility/xlogging.h"
+#include "azure_c_shared_utility/consolelogger.h"
 
 void consolelogger_log(LOG_CATEGORY log_category, const char* file, const char* func, const int line, unsigned int options, const char* format, ...)
 {
