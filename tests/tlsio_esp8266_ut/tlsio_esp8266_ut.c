@@ -51,6 +51,11 @@ void my_gballoc_free(void* ptr)
 #include "azure_c_shared_utility/xio.h"
 #include "azure_c_shared_utility/tlsio.h"
 
+#define TEST_CREATE_CONNECTION_HOST_NAME (const char*)"https://test.azure-devices.net"
+#define TEST_CREATE_CONNECTION_PORT (int)443
+
+static const TLSIO_CONFIG tlsio_config = { TEST_CREATE_CONNECTION_HOST_NAME, TEST_CREATE_CONNECTION_PORT };
+
 static int g_ssl_write_success = 1;
 static int g_ssl_read_returns_data = 1;
 static size_t g_on_bytes_received_buffer_size = 0;
@@ -1622,10 +1627,8 @@ BEGIN_TEST_SUITE(tlsio_esp8266_ut)
         {
             umock_c_negative_tests_reset();
             umock_c_negative_tests_fail_call(i);
-
-            TLSIO_CONFIG tlsio_config;
             ///act
-            result = (OPTIONHANDLER_HANDLE)tlsioInterfaces->concrete_io_create(&tlsio_config);
+            result = (OPTIONHANDLER_HANDLE)tlsioInterfaces->concrete_io_create((void*)&tlsio_config);
 
             ///assert
             ASSERT_IS_NULL(result);
@@ -1644,9 +1647,6 @@ BEGIN_TEST_SUITE(tlsio_esp8266_ut)
     /* TESTS_SRS_TLSIO_SSL_ESP8266_99_020: [ If tlsio_openssl_create get success to create the tlsio instance, it shall set the tlsio state as TLSIO_STATE_NOT_OPEN. ] */
     TEST_FUNCTION(tlsio_openssl_create__succeed)
     {
-        ///arrange
-        TLSIO_CONFIG tlsio_config;
-
         TLS_IO_INSTANCE* result;
         const IO_INTERFACE_DESCRIPTION* tlsioInterfaces = tlsio_openssl_get_interface_description();
         ASSERT_IS_NOT_NULL(tlsioInterfaces);
@@ -1657,7 +1657,7 @@ BEGIN_TEST_SUITE(tlsio_esp8266_ut)
         STRICT_EXPECTED_CALL(mallocAndStrcpy_s(IGNORED_PTR_ARG, IGNORED_PTR_ARG)).IgnoreArgument(1).IgnoreArgument(2);  
 
         ///act
-        result = (TLS_IO_INSTANCE*)tlsioInterfaces->concrete_io_create(&tlsio_config);
+        result = (TLS_IO_INSTANCE*)tlsioInterfaces->concrete_io_create((void*)&tlsio_config);
 
         ///assert
         ASSERT_IS_NOT_NULL(result);
